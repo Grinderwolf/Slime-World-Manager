@@ -1,5 +1,7 @@
 language: java
 install:
+    - wget -O paper-1.17.jar papermc.io/api/v1/paper/1.17/latest/download && java -Dpaperclip.patchonly=true -jar paper-1.17.jar && mvn install:install-file -Dfile=cache/patched_1.17.jar -DgroupId=com.destroystokyo.paper -DartifactId=paper -Dversion=1.17-R0.1-SNAPSHOT -Dpackaging=jar
+    - wget -O paper-1.16.5.jar papermc.io/api/v1/paper/1.16.5/latest/download && java -Dpaperclip.patchonly=true -jar paper-1.16.5.jar && mvn install:install-file -Dfile=cache/patched_1.16.5.jar -DgroupId=com.destroystokyo.paper -DartifactId=paper -Dversion=1.16.5-R0.1-SNAPSHOT -Dpackaging=jar
     - wget -O paper-1.16.2.jar papermc.io/api/v1/paper/1.16.2/latest/download && java -Dpaperclip.patchonly=true -jar paper-1.16.2.jar && mvn install:install-file -Dfile=cache/patched_1.16.2.jar -DgroupId=com.destroystokyo.paper -DartifactId=paper -Dversion=1.16.2-R0.1-SNAPSHOT -Dpackaging=jar
     - wget https://cdn.getbukkit.org/spigot/spigot-1.15.1.jar && mvn install:install-file -Dfile=spigot-1.15.1.jar -DgroupId=org.spigotmc -DartifactId=spigot -Dversion=1.15.1-R0.1-SNAPSHOT -Dpackaging=jar
     - wget https://cdn.getbukkit.org/spigot/spigot-1.14.4.jar && mvn install:install-file -Dfile=spigot-1.14.4.jar -DgroupId=org.spigotmc -DartifactId=spigot -Dversion=1.14.4-R0.1-SNAPSHOT -Dpackaging=jar
@@ -7,12 +9,12 @@ install:
     - wget https://cdn.getbukkit.org/spigot/spigot-1.13.jar && mvn install:install-file -Dfile=spigot-1.13.jar -DgroupId=org.spigotmc -DartifactId=spigot -Dversion=1.13-R0.1-SNAPSHOT -Dpackaging=jar
     - wget -O paper-1.12.2.jar https://papermc.io/api/v1/paper/1.12.2/1618/download && java -Dpaperclip.patchonly=true -jar paper-1.12.2.jar && mvn install:install-file -Dfile=cache/patched_1.12.2.jar -DgroupId=com.destroystokyo.paper -DartifactId=paper -Dversion=1.12.2-R0.1-SNAPSHOT -Dpackaging=jar
     - wget -O paper-1.11.2.jar https://papermc.io/api/v1/paper/1.11.2/1104/download && java -Dpaperclip.patchonly=true -jar paper-1.11.2.jar && mvn install:install-file -Dfile=cache/patched_1.11.2.jar -DgroupId=com.destroystokyo.paper -DartifactId=paper -Dversion=1.11.2-R0.1-SNAPSHOT -Dpackaging=jar
-    - wget -O paper-1.10.2.jar https://papermc.io/api/v1/paper/1.10.2/916/download && java -Dpaperclip.patchonly=true -jar paper-1.10.2.jar && mvn install:install-file -Dfile=cache/patched_1.10.2.jar -DgroupId=com.destroystokyo.paper -DartifactId=paper -Dversion=1.10.2-R0.1-SNAPSHOT -Dpackaging=jar
+    - wget -O spigot-1.10.2.jar https://cdn.getbukkit.org/spigot/spigot-1.10.2-R0.1-SNAPSHOT-latest.jar && mvn install:install-file -Dfile=spigot-1.10.2.jar -DgroupId=org.spigotmc -DartifactId=spigot -Dversion=1.10.2-R0.1-SNAPSHOT -Dpackaging=jar
     - wget -O spigot-1.9.4.jar https://cdn.getbukkit.org/spigot/spigot-1.9.4-R0.1-SNAPSHOT-latest.jar && mvn install:install-file -Dfile=spigot-1.9.4.jar -DgroupId=org.spigotmc -DartifactId=spigot -Dversion=1.9.4-R0.1-SNAPSHOT -Dpackaging=jar
     - wget -O spigot-1.9.jar https://cdn.getbukkit.org/spigot/spigot-1.9-R0.1-SNAPSHOT-latest.jar && mvn install:install-file -Dfile=spigot-1.9.jar -DgroupId=org.spigotmc -DartifactId=spigot -Dversion=1.9-R0.1-SNAPSHOT -Dpackaging=jar
     - wget -O spigot-1.8.8.jar https://cdn.getbukkit.org/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar && mvn install:install-file -Dfile=spigot-1.8.8.jar -DgroupId=org.spigotmc -DartifactId=spigot -Dversion=1.8.8-R0.1-SNAPSHOT -Dpackaging=jar
 jdk: 
-   - oraclejdk8
+   - oraclejdk16
 dist: trusty
 deploy:
    provider: script

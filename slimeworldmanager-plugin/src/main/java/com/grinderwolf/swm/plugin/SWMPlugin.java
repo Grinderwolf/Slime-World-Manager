@@ -10,7 +10,7 @@ import com.grinderwolf.swm.api.world.properties.SlimeProperties;
 import com.grinderwolf.swm.api.world.properties.SlimePropertyMap;
 import com.grinderwolf.swm.nms.CraftSlimeWorld;
 import com.grinderwolf.swm.nms.SlimeNMS;
-import com.grinderwolf.swm.nms.v1_10_R1.v1_10_R1SlimeNMS;
+//import com.grinderwolf.swm.nms.v1_10_R1.v1_10_R1SlimeNMS;
 import com.grinderwolf.swm.nms.v1_11_R1.v1_11_R1SlimeNMS;
 import com.grinderwolf.swm.nms.v1_12_R1.v1_12_R1SlimeNMS;
 import com.grinderwolf.swm.nms.v1_13_R1.v1_13_R1SlimeNMS;
@@ -31,6 +31,8 @@ import com.grinderwolf.swm.plugin.upgrade.WorldUpgrader;
 import com.grinderwolf.swm.plugin.world.WorldUnlocker;
 import com.grinderwolf.swm.plugin.world.importer.WorldImporter;
 import com.grinderwolf.swm.v1_16_R2.v1_16_R2SlimeNMS;
+import com.grinderwolf.swm.v1_16_R3.v1_16_R3SlimeNMS;
+import com.grinderwolf.swm.v1_17_R1.v1_17_R1SlimeNMS;
 import lombok.Getter;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.bstats.bukkit.Metrics;
@@ -169,8 +171,8 @@ public class SWMPlugin extends JavaPlugin implements SlimePlugin {
                 return new v1_9_R1SlimeNMS();
             case "v1_9_R2":
                 return new v1_9_R2SlimeNMS();
-            case "v1_10_R1":
-                return new v1_10_R1SlimeNMS();
+            //case "v1_10_R1":
+             //   return new v1_10_R1SlimeNMS();
             case "v1_11_R1":
                 return new v1_11_R1SlimeNMS();
             case "v1_12_R1":
@@ -185,6 +187,10 @@ public class SWMPlugin extends JavaPlugin implements SlimePlugin {
                 return new v1_15_R1SlimeNMS();
             case "v1_16_R2":
                 return new v1_16_R2SlimeNMS();
+            case "v1_16_R3":
+                return new v1_16_R3SlimeNMS();
+            case "v1_17_R1":
+                return new v1_17_R1SlimeNMS();
             default:
                 throw new InvalidVersionException(nmsVersion);
         }

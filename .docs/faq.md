@@ -3,7 +3,7 @@
 
 * Which Spigot versions is this compatible with?
 
-Currently, SWM can run on any Spigot version from 1.8.8 up to 1.16.2.
+Currently, SWM can run on any Spigot version from 1.8.8 up to 1.17.1.
 
 * Can I override the default world?
 

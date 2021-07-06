@@ -1,0 +1,7 @@
+{
+    net.minecraft.world.level.EnumGamemode gamemode = (net.minecraft.world.level.EnumGamemode) com.grinderwolf.swm.clsm.ClassModifier.getDefaultGamemode();
+
+    if (gamemode != null) {
+        return gamemode;
+    }
+}

@@ -1,0 +1,208 @@
+    {
+        net.minecraft.server.level.WorldServer[] defaultWorlds = (net.minecraft.server.level.WorldServer[]) com.grinderwolf.swm.clsm.ClassModifier.getDefaultWorlds();
+
+        if (defaultWorlds != null) {
+            System.out.println("Overriding default worlds");
+            int worldCount = 3;
+
+            for (int worldId = 0; worldId < worldCount; ++worldId) {
+                byte dimension = 0;
+                net.minecraft.resources.ResourceKey dimensionKey = net.minecraft.resources.ResourceKey.a(net.minecraft.core.IRegistry.R, new net.minecraft.resources.MinecraftKey("overworld"));
+
+                if (worldId == 1) {
+                    if ($0.getAllowNether()) {
+                        dimension = -1;
+                        dimensionKey = net.minecraft.resources.ResourceKey.a(net.minecraft.core.IRegistry.R, new net.minecraft.resources.MinecraftKey("the_nether"));
+                    } else {
+                        continue;
+                    }
+                }
+
+                if (worldId == 2) {
+                    if ($0.server.getAllowEnd()) {
+                        dimension = 1;
+                        dimensionKey = net.minecraft.resources.ResourceKey.a(net.minecraft.core.IRegistry.R, new net.minecraft.resources.MinecraftKey("the_end"));
+                    } else {
+                        continue;
+                    }
+                }
+
+                net.minecraft.server.level.WorldServer world = defaultWorlds[worldId];
+                net.minecraft.world.level.storage.WorldDataServer worlddata;
+
+                if (world == null) {
+                    java.lang.String worldType = org.bukkit.World.Environment.getEnvironment(dimension).toString().toLowerCase();
+                    java.lang.String name = dimension == 0 ? $1 : $1 + "_" + worldType;
+                    net.minecraft.world.level.storage.Convertable.ConversionSession worldSession;
+
+                    if (worldId == 0) {
+                        worldSession = $0.j;
+                    } else {
+                        java.lang.String dim = "DIM" + dimension;
+                        java.io.File newWorld = new java.io.File(new java.io.File(name), dim);
+                        java.io.File oldWorld = new java.io.File(new java.io.File(s), dim);
+                        java.io.File oldLevelDat = new java.io.File(new java.io.File(s), "level.dat");
+                        if (!newWorld.isDirectory() && oldWorld.isDirectory() && oldLevelDat.isFile()) {
+                            //LOGGER.info("---- Migration of old " + worldType + " folder required ----");
+                            //LOGGER.info("Unfortunately due to the way that Minecraft implemented multiworld support in 1.6, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
+                            //LOGGER.info("We will move $0 folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
+                            //LOGGER.info("Attempting to move " + oldWorld + " to " + newWorld + "...");
+                            if (newWorld.exists()) {
+                                //LOGGER.warn("A file or folder already exists at " + newWorld + "!");
+                                //LOGGER.info("---- Migration of old " + worldType + " folder failed ----");
+                            } else if (newWorld.getParentFile().mkdirs()) {
+                                if (oldWorld.renameTo(newWorld)) {
+                                    //LOGGER.info("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
+
+                                    try {
+                                        com.google.common.io.Files.copy(oldLevelDat, new java.io.File(new java.io.File(name), "level.dat"));
+                                        org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils.copyDirectory(new java.io.File(new java.io.File(s), "data"), new java.io.File(new java.io.File(name), "data"));
+                                    } catch (java.io.IOException ex) {
+                                        //LOGGER.warn("Unable to migrate world data.");
+                                    }
+
+                                    //LOGGER.info("---- Migration of old " + worldType + " folder complete ----");
+                                } else {
+                                    //LOGGER.warn("Could not move folder " + oldWorld + " to " + newWorld + "!");
+                                    //LOGGER.info("---- Migration of old " + worldType + " folder failed ----");
+                                }
+                            } else {
+                                //LOGGER.warn("Could not create path for " + newWorld + "!");
+                                //LOGGER.info("---- Migration of old " + worldType + " folder failed ----");
+                            }
+                        }
+
+                        try {
+                            worldSession = net.minecraft.world.level.storage.Convertable.a($0.server.getWorldContainer().toPath()).c(name, dimensionKey);
+                        } catch (java.io.IOException ex) {
+                            throw new java.lang.RuntimeException(ex);
+                        }
+
+                        convertWorld(worldSession);
+                    }
+
+                    org.bukkit.generator.ChunkGenerator gen = $0.server.getGenerator(name);
+                    net.minecraft.core.IRegistryCustom.Dimension iregistrycustom_dimension = $0.l;
+                    net.minecraft.resources.RegistryReadOps registryreadops = net.minecraft.resources.RegistryReadOps.a(net.minecraft.nbt.DynamicOpsNBT.a, $0.aC.i(), iregistrycustom_dimension);
+                    worlddata = (net.minecraft.world.level.storage.WorldDataServer) worldSession.a(registryreadops, $0.datapackconfiguration);
+                    net.minecraft.world.level.levelgen.GeneratorSettings generatorsettings;
+
+                    if (worlddata == null) {
+                        net.minecraft.world.level.WorldSettings worldsettings;
+
+                        if ($0.isDemoMode()) {
+                            worldsettings = i;
+                            generatorsettings = net.minecraft.world.level.levelgen.GeneratorSettings.a(iregistrycustom_dimension);
+                        } else {
+                            net.minecraft.server.dedicated.DedicatedServerProperties dedicatedserverproperties = ((net.minecraft.server.dedicated.DedicatedServer)$0).getDedicatedServerProperties();
+                            worldsettings = new net.minecraft.world.level.WorldSettings(dedicatedserverproperties.p, dedicatedserverproperties.o, dedicatedserverproperties.z, dedicatedserverproperties.n, false, new net.minecraft.world.level.GameRules(), $0.datapackconfiguration);
+                            generatorsettings = $0.options.has("bonusChest") ? dedicatedserverproperties.Y.j() : dedicatedserverproperties.Y;
+                        }
+
+                        worlddata = new net.minecraft.world.level.storage.WorldDataServer(worldsettings, generatorsettings, com.mojang.serialization.Lifecycle.stable());
+                    }
+
+                    worlddata.checkName(name);
+
+                    if ($0.options.has("forceUpgrade")) {
+                        java.util.Set entrySet = worlddata.getGeneratorSettings().d();
+                        java.util.Set resourceKeySet = new java.util.HashSet(entrySet.size());
+                        java.util.Iterator entryIt = entrySet.iterator();
+
+                        while (entryIt.hasNext()) {
+                            java.util.Map.Entry entry = (java.util.Map.Entry) entryIt.next();
+
+                            resourceKeySet.add(net.minecraft.resources.ResourceKey.a(net.minecraft.core.IRegistry.P, ((net.minecraft.resources.ResourceKey) entry.getKey()).a()));
+                        }
+
+                        net.minecraft.server.Main.convertWorld(worldSession, net.minecraft.util.datafix.DataConverterRegistry.a(), $0.options.has("eraseCache"), com.grinderwolf.swm.clsm.ClassModifier.BOOLEAN_SUPPLIER, com.google.common.collect.ImmutableSet.of(resourceKeySet));
+                    }
+
+                    generatorsettings = worlddata.getGeneratorSettings();
+                    boolean flag = generatorsettings.isDebugWorld();
+                    long i = generatorsettings.getSeed();
+                    long j = net.minecraft.world.level.biome.BiomeManager.a(i);
+                    java.util.List list = com.google.common.collect.ImmutableList.of(new net.minecraft.world.level.levelgen.MobSpawnerPhantom(), new net.minecraft.world.level.levelgen.MobSpawnerPatrol(), new net.minecraft.world.entity.npc.MobSpawnerCat(), new net.minecraft.world.entity.ai.village.VillageSiege(), new net.minecraft.world.entity.npc.MobSpawnerTrader(worlddata));
+                    net.minecraft.core.RegistryMaterials registrymaterials = generatorsettings.d();
+                    net.minecraft.world.level.dimension.WorldDimension worlddimension = (net.minecraft.world.level.dimension.WorldDimension)registrymaterials.a(dimensionKey);
+                    net.minecraft.world.level.dimension.DimensionManager dimensionmanager;
+                    java.lang.Object chunkgenerator;
+                    if (worlddimension == null) {
+                        dimensionmanager = (net.minecraft.world.level.dimension.DimensionManager)$0.l.a().d(net.minecraft.world.level.dimension.DimensionManager.k);
+                        chunkgenerator = net.minecraft.world.level.levelgen.GeneratorSettings.a($0.l.b(net.minecraft.core.IRegistry.aO), $0.l.b(net.minecraft.core.IRegistry.aH), (new java.util.Random()).nextLong());
+                    } else {
+                        dimensionmanager = worlddimension.b();
+                        chunkgenerator = worlddimension.c();
+                    }
+
+                    net.minecraft.resources.ResourceKey worldKey = net.minecraft.resources.ResourceKey.a(net.minecraft.core.IRegistry.Q, dimensionKey.a());
+                    net.minecraft.server.level.progress.WorldLoadListener worldloadlistener = $0.L.create(11);
+
+                    if (worldId == 0) {
+                        world = new net.minecraft.server.level.WorldServer($0, $0.aA, worldSession, worlddata, worldKey, dimensionmanager, worldloadlistener, (net.minecraft.world.level.chunk.ChunkGenerator)chunkgenerator, flag, j, list, true, org.bukkit.World.Environment.getEnvironment(dimension), gen);
+                    } else {
+                        world = new net.minecraft.server.level.WorldServer($0, $0.aA, worldSession, worlddata, worldKey, dimensionmanager, worldloadlistener, (net.minecraft.world.level.chunk.ChunkGenerator)chunkgenerator, flag, j, com.google.common.collect.ImmutableList.of(), true, org.bukkit.World.Environment.getEnvironment(dimension), gen);
+                    }
+                } else {
+                    worlddata = world.E;
+                }
+
+                if (worldId == 0) {
+                    $0.o = worlddata;
+                    $0.o.setGameType(((net.minecraft.server.dedicated.DedicatedServer) $0).getDedicatedServerProperties().o);
+
+                    net.minecraft.world.level.storage.WorldPersistentData worldpersistentdata = world.getWorldPersistentData();
+                    $0.initializeScoreboards(worldpersistentdata);
+                    $0.server.scoreboardManager = new org.bukkit.craftbukkit.v1_17_R1.scoreboard.CraftScoreboardManager($0, world.getScoreboard());
+                    $0.au = new net.minecraft.world.level.storage.PersistentCommandStorage(worldpersistentdata);
+                }
+
+                worlddata.a($0.getServerModName(), $0.getModded().isPresent());
+                $0.initWorld(world, worlddata, o, worlddata.getGeneratorSettings());
+                $0.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(world.getWorld()));
+
+                $0.R.put(world.getDimensionKey(), world);
+                $0.getPlayerList().setPlayerFileData(world);
+
+                if (worlddata.getCustomBossEvents() != null) {
+                    $0.getBossBattleCustomData().load(worlddata.getCustomBossEvents());
+                }
+            }
+            $0.updateWorldSettings();
+
+            java.util.Iterator worldList = $0.getWorlds().iterator();
+
+            while (worldList.hasNext()) {
+                net.minecraft.server.level.WorldServer worldserver = (net.minecraft.server.level.WorldServer) worldList.next();
+                $0.loadSpawn(worldserver.getChunkProvider().a.z, worldserver);
+                $0.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(worldserver.getWorld()));
+            }
+
+            net.minecraft.world.scores.Scoreboard scoreboard = $0.getScoreboard();
+            java.util.List teams = new java.util.ArrayList(scoreboard.getTeams());
+            java.util.Iterator teamsIt = teams.iterator();
+
+            while (teamsIt.hasNext()) {
+                net.minecraft.world.scores.ScoreboardTeam team = (net.minecraft.world.scores.ScoreboardTeam) teamsIt.next();
+
+                if (team.getName().startsWith("collideRule_")) {
+                    scoreboard.removeTeam(team);
+                }
+            }
+
+            //try {
+            //    if (!com.destroystokyo.paper.PaperConfig.enablePlayerCollisions) {
+            //        $0.getPlayerList().collideRuleTeamName = org.bukkit.craftbukkit.libs.org.apache.commons.lang3.StringUtils.left("collideRule_" + java.util.concurrent.ThreadLocalRandom.current().nextInt(), 16);
+            //        net.minecraft.world.scores.ScoreboardTeam collideTeam = scoreboard.createTeam($0.getPlayerList().collideRuleTeamName);
+            //        collideTeam.setCanSeeFriendlyInvisibles(false);
+            //    }
+            //} catch (ClassNotFoundException ex) {
+
+            //}
+
+            $0.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
+            $0.server.getPluginManager().callEvent(new org.bukkit.event.server.ServerLoadEvent(org.bukkit.event.server.ServerLoadEvent.LoadType.STARTUP));
+            $0.K.acceptConnections();
+            return;
+        }
+    }

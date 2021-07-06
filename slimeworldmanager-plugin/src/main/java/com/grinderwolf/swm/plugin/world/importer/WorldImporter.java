@@ -107,17 +107,24 @@ public class WorldImporter {
     private static CompoundTag loadMap(File mapFile) throws IOException {
         String fileName = mapFile.getName();
         int mapId = Integer.parseInt(fileName.substring(4, fileName.length() - 4));
+        CompoundTag tag;
 
-        NBTInputStream nbtStream = new NBTInputStream(new FileInputStream(mapFile), NBTInputStream.GZIP_COMPRESSION, ByteOrder.BIG_ENDIAN);
-        CompoundTag tag = nbtStream.readTag().getAsCompoundTag().get().getAsCompoundTag("data").get();
+        try (NBTInputStream nbtStream = new NBTInputStream(new FileInputStream(mapFile),
+                NBTInputStream.GZIP_COMPRESSION, ByteOrder.BIG_ENDIAN)) {
+            tag = nbtStream.readTag().getAsCompoundTag().get().getAsCompoundTag("data").get();
+        }
+
         tag.getValue().put("id", new IntTag("id", mapId));
 
         return tag;
     }
 
     private static LevelData readLevelData(File file) throws IOException, InvalidWorldException {
-        NBTInputStream nbtStream = new NBTInputStream(new FileInputStream(file));
-        Optional<CompoundTag> tag = nbtStream.readTag().getAsCompoundTag();
+        Optional<CompoundTag> tag;
+
+        try (NBTInputStream nbtStream = new NBTInputStream(new FileInputStream(file))) {
+            tag = nbtStream.readTag().getAsCompoundTag();
+        }
 
         if (tag.isPresent()) {
             Optional<CompoundTag> dataTag = tag.get().getAsCompoundTag("Data");

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>slimeworldmanager</artifactId>
         <groupId>com.grinderwolf</groupId>
-        <version>2.3.0-SNAPSHOT</version>
+        <version>2.3.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>slimeworldmanager-plugin</artifactId>
@@ -92,6 +92,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.grinderwolf</groupId>
+            <artifactId>slimeworldmanager-nms-v1_17_R1</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.luben</groupId>
             <artifactId>zstd-jni</artifactId>
             <version>1.4.5-6</version>
@@ -115,6 +120,12 @@
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
             <version>1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.grinderwolf</groupId>
+            <artifactId>slimeworldmanager-nms-v1_16_R3</artifactId>
+            <version>2.3.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>
